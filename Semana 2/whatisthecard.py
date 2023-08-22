@@ -20,24 +20,24 @@ Para cada caso de teste print a carta alvo.
 n = int(input())
 count_case = 1
 for _ in range(n):
+    pilha = []
     mao = []
-    while len(pilha) <= 52:
-        pilha = [x for x in input().split()]
-        #TODO: arrumar input para até no máximo 52 linhas
+    while len(pilha) < 52:
+        pilha.extend(input().split())
     for _ in range(25):
         mao.append(pilha.pop())
     y = 0
     for _ in range(3):
         topo = pilha.pop()
-        if topo[0] not in ('A','Q','K','J'):
+        if topo[0].isnumeric():
             x = int(topo[0])
         else:
             x = 10
         y = x + y
         for i in range(10-x):
             pilha.pop()
-    for _ in range(25):
-        pilha.append(mao.pop())
+    mao = reversed(mao)
+    pilha += mao
     print(f'Case {count_case}: {pilha[y-1]}')
     count_case += 1
         
