@@ -1,10 +1,15 @@
+first = True
 while True:
     try:
         p, k = map(int, input().split())
     except ValueError:
         break
-    
-    points_players = [0] * p
+    if first:
+        first = False
+    else:
+        print()
+    wins = [0] * p
+    loses = [0] * p
     n = k * p * (p - 1) // 2
     
     for _ in range(n):
@@ -13,15 +18,14 @@ while True:
         if m1 == m2:
             continue
         elif (m1, m2) in [('rock', 'scissors'), ('paper', 'rock'), ('scissors', 'paper')]:
-            points_players[p1-1] += 1
+            wins[p1-1] += 1
+            loses[p2-1] += 1
         else:
-            points_players[p2-1] += 1
+            wins[p2-1] += 1
+            loses[p1-1] += 1
     
-    total_points = sum(points_players)
-    for points in points_players:
-        try:
-            print(f'{points / total_points:.3f}')
-        except:
+    for i in range(len(wins)):
+        if wins[i] + loses[i] == 0:
             print('-')
-    print()
-#TODO: fazer em cpp
+        else:
+            print(f'{wins[i]/ (wins[i] + loses[i]):.3f}')
