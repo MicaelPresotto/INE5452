@@ -24,18 +24,39 @@ j1, j2 = [int(x) for x in input().split()]
 cartas_john += j1 + j2
 m1,m2 = [int(x) for x in input().split()]
 cartas_mary += m1+m2
+lista_cartas = [0] * 14
+lista_cartas[j1] += 1
+lista_cartas[j2] += 1
+lista_cartas[m1] += 1
+lista_cartas[m2] += 1
 c = [int(x) for x in input().split()]
 for i in c:    
     if i >= 11:
         cartas_john += 10
         cartas_mary += 10
+        lista_cartas[i] += 1
     else:
         cartas_john += i
         cartas_mary += i
-    if cartas_john == 23 or cartas_mary > 23 or cartas_mary + 10 < 23:
+        lista_cartas[i] += 1
+    if cartas_john == 23 or cartas_mary > 23:
         print(-1)
         sys.exit()
-if cartas_john > cartas_mary:
-    print(24-cartas_john)
+if cartas_mary < 13 and cartas_john < 14:
+    print(-1)
     sys.exit()
-print(23 - cartas_mary)
+menores_cartas = [24-cartas_john, 23-cartas_mary]
+menor = min(menores_cartas)
+
+if lista_cartas[menor] == 4:
+    for i in range(menor, len(lista_cartas)):
+        if lista_cartas[i] < 4:
+            menor = i
+            break
+if menor + cartas_mary > 23:
+    print(-1)
+else:
+    print(menor)
+
+
+
