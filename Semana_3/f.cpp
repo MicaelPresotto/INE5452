@@ -29,7 +29,7 @@ std::string verify_conflicts(int n, int m, int *start_one, int *end_one, int *st
     }
     if (m != 0){
         for(int i = 0; i < m; i++){
-            while(end_rep[i] < 1000000){
+            while(end_rep[i] <= 1000000){
                 for(int j = start_rep[i]; j < end_rep[i]-1; j++){
                     if(bits[j] == 0) bits[j] = 1;
                     else return "CONFLICT";
