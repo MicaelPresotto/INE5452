@@ -15,16 +15,23 @@ int main(void){
                 cont++;
             }while (std::next_permutation(seats.begin(), seats.end()));
         }
+        std::vector<int> vector_a;
+        std::vector<int> vector_b;
+        std::vector<int> vector_c;
         for(int i = 0; i < m; i++){
-            int a,b,c; std::cin >> a >> b >> c;
-            do{
-                if(c==0){
-                    if(abs(seats[b] - seats[a]) <= c) cont++;
-                }else{
-                    if(abs(seats[b] - seats[a]) >= abs(c)) cont++;
-                } 
-                }while(std::next_permutation(seats.begin(), seats.end()));
-        }
+            int a,b,c;
+            vector_a.push_back(a);
+            vector_b.push_back(b);
+            vector_c.push_back(c);
+            
+        do{
+            if(c>0){
+                if(abs(seats[b] - seats[a]) <= c) cont++;
+            }else{
+                if(abs(seats[b] - seats[a]) >= abs(c)) cont++;
+            } 
+            }while(std::next_permutation(seats.begin(), seats.end()));
+    }
         std::cout << cont << '\n';
     }
 }
