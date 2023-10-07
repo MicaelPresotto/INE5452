@@ -40,7 +40,7 @@
 #include <algorithm>
 int main(void){
     for(;;){
-        int max = 0;
+        
         int n,m; std::cin >> n >> m;
         if(n == 0 && m == 0) break;
         std::vector<std::vector<int>> matrix;
@@ -53,25 +53,28 @@ int main(void){
             matrix.push_back(row);
         }
         int q; std::cin >> q;
-        for(int i = 0; i < q; i++){
+        for(int i = 0; i <= q; i++){
+            int max = 0;
+            if(i == q){
+                std::cout << "-" << std::endl;
+                break;
+            }
             int l, u; std::cin >> l >> u;
             for(int j = 0; j < matrix.size(); j++){
-                for(int k = 0; j < matrix.size(); k++){
-                    if (l >= matrix[j][k]){
-                        int cont = 0;
-                        int row = j;
-                        int col = k;
-                        //FIXME: segmentation fault
-                        while(matrix[row][col] <= u){
-                            max++;
-                            row++;
-                            cont++;
-                        }
-                        if(cont > max) max = cont;
-                    }
+                auto lower_bound_it = std::lower_bound(matrix[j].begin(), matrix[j].end(), l);
+                int cont = 0;
+                int row = j;
+                int col = lower_bound_it - matrix[j].begin();
+                while(row < n && col < m && matrix[row][col] <= u){
+                    col++;
+                    row++;
+                    cont++;
                 }
+                if(cont > max) max = cont;
+                
             }
+            std::cout << max << std::endl;
         }
-        std::cout << max << std::endl;
+        
     }
 }
