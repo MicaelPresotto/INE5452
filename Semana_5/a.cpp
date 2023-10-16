@@ -21,21 +21,39 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 #include <vector>
 #include <algorithm>
 
+std::pair<std::string, int> solve(std::map<char, std::vector<int>>& position, std::string& ss){
+    int current = 0;
+    for(int j = 0; j < ss.size(); j++){
+        int index = ss[j];
+        auto it = std::upper_bound(position[index].begin(), position[index].end(), current);
+        if(it == position[index].end()){
+            return std::make_pair("Not matched", current);
+        }
+        current = *it;
+    }
+    return std::make_pair("Matched", current);
+}
+
 int main(void){
     std::string s; std::cin >> s;
-    std::vector<std::vector<int>> position;
+    std::map<char, std::vector<int>> mp;
     int q; std::cin >> q;
-
-    for(int i = 0; i < q; i++){
+    for(int j = 0; j < s.size(); j++){
+        mp[s[j]].push_back(j);
+    }
+    while(q--){
         std::string ss; std::cin >> ss;
-        for(int j = 0; j < s.size(); j++){
-            int index = s[j] - 'a';
-            position[index].push_back(j);
+        std::pair<std::string, int> ans = solve(mp, ss);
+        if(ans.first == "Matched"){
+            int a1 = mp[ss[0]][0];
+            int a2 = ans.second;
+            std::cout << ans.first << " " << a1 << " " << a2 << std::endl;
+        }else{
+            std::cout << ans.first << std::endl;
         }
-        bool valid = true;
-        
     }
 }
