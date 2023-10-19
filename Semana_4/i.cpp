@@ -31,70 +31,111 @@
 
 
 // Função para verificar se uma rainha não se ataca com as outras rainhas
-bool safe(const std::vector<std::vector<int>>& matrix, int row1, int col1) {
+bool safe(const std::vector<std::vector<int>>& matrix, int row, int col) {
     int n = matrix.size(); // Tamanho da matriz (assumindo que seja uma matriz quadrada)
 
-    // Verificar se a rainha não se ataca horizontalmente na mesma linha
-    for (int col = 0; col < n; col++) {
-        if (col != col1 && matrix[row1][col] == 1) {
+    // Verificando se há alguma rainha na mesma linha ou coluna
+    for (int i = 0; i < n; i++) {
+        if (matrix[row][i] == 1 || matrix[i][col] == 1) {
             return false;
         }
     }
-
-    // Verificar se a rainha não se ataca diagonalmente
-    for (int i = 1; i < n; i++) {
-        // Diagonal superior esquerda
-        if (row1 - i >= 0 && col1 - i >= 0 && matrix[row1 - i][col1 - i] == 1) {
+    // Diagonal inferior direita
+    int i,j;
+    i = row+1, j = col +1;
+    while(i < n && j < n) {
+        if (matrix[i][j] == 1) {
             return false;
         }
+        i++;
+        j++;
 
-        // Diagonal superior direita
-        if (row1 - i >= 0 && col1 + i < n && matrix[row1 - i][col1 + i] == 1) {
+    }
+    // Diagonal inferior esquerda
+    i = row+1, j = col -1;
+    while(i < n && j >= 0) {
+        if (matrix[i][j] == 1) {
             return false;
         }
-
-        // Diagonal inferior esquerda
-        if (row1 + i < n && col1 - i >= 0 && matrix[row1 + i][col1 - i] == 1) {
-            return false;
-        }
-
-        // Diagonal inferior direita
-        if (row1 + i < n && col1 + i < n && matrix[row1 + i][col1 + i] == 1) {
-            return false;
-        }
+        i++;
+        j--;
     }
 
-    // Se não se atacar horizontalmente ou diagonalmente, é seguro
+    // Diagonal superior direita
+    i = row-1, j = col +1;
+    while(i >= 0 && j < n) {
+        if (matrix[i][j] == 1) {
+            return false;
+        }
+        i--;
+        j++;
+    }
+
+    // Diagonal superior esquerda
+    i = row-1, j = col -1;
+    while(i >= 0 && j >= 0) {
+        if (matrix[i][j] == 1) {
+            return false;
+        }
+        i--;
+        j--;
+    }
     return true;
 }
 
-
-bool solve(std::vector<std::vector<int>> matrix){
+bool all_safe(const std::vector<std::vector<int>>& matrix){
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
-            if (matrix[i][j] == 1){
-                //printando a linha a coluna e a diagonal
+            if(matrix[i][j] == 1){
                 if(!safe(matrix, i, j)){
-                    matrix[i][j] = 0;
-                    matrix[i+1][j] = 1;
+                    return false;
                 }
             }
         }
     }
+    return true;
+}
+
+int solve(std::vector<std::vector<int>> &matrix,std::vector<std::pair<int, int>> &queens, std::vector<bool> &used, int col){
+    int n = matrix.size();
+    if(col == 8){
+        if (all_safe(matrix)){
+            return 0;
+        }
+        return 2e9;
+    }
+    int min = 2e9;
+    auto[qi, qj] = queens[col];
+    for(int row = 0; row < 8; row++){
+        if(used[row]) continue;
+        if(!safe(matrix, row, qj)) continue;
+        used[row] = true;
+        queens[col].first = row;
+        matrix[row][qj] = 1;
+        int solved = solve(matrix, queens, used, col+1);
+        if (row != qi) solved++;
+        min = std::min(min, solved);
+        matrix[row][qj] = 0;
+        queens[col].first = qi;
+        used[row] = false;
+    }
+    return min;
 }
 
 int main(void){
+    int caso = 1;
     for(;;){
         std::vector<std::vector<int>> matrix(8, std::vector<int>(8, 0));
+        std::vector<std::pair<int, int>> queens;
+        std::vector<bool> used;
         for(int i = 0; i < 8; i++){
             int k;std::cin >> k;
-            matrix[k-1][i] = 1;
+            queens.push_back(std::make_pair(k-1, i));
+            used.push_back(false);
 
         }
         if(std::cin.eof()) break;
-        if(safe(matrix, 0, 0)){
-            std::cout << "ok" << std::endl;
+        int min = solve(matrix, queens, used, 0);
+        std::cout<< min << std::endl;
         }
-    }
-    return 0;
 }
