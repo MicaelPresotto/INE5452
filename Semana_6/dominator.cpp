@@ -1,17 +1,26 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <string>
 
-std::vector<bool> visited(100);
+
 std::vector<std::vector<char>> dominators;
 
-void dfs(int u, std::vector<std::vector<int>> &adjs) {
+void dfs(int u, std::vector<std::vector<int>> &adjs, std::vector<bool> &visited) {
     visited[u] = true;
     for (int v = 0; v < adjs.size(); v++) {
         if (adjs[u][v] == 1 && !visited[v]) {
-            dfs(v, adjs);
+            dfs(v, adjs, visited);
         }
     }
+}
+
+int sum_vector(std::vector<int> v) {
+    int sum = 0;
+    for (int i = 0; i < v.size(); i++) {
+        sum += v[i];
+    }
+    return sum;
 }
 
 int main(void) {
@@ -22,6 +31,7 @@ int main(void) {
         int n;
         std::cin >> n;
         std::vector<std::vector<int>> adjs;
+        std::vector<bool> visited(n);
         for (int i = 0; i < n; i++) {
             visited.push_back(false);
             std::vector<int> line = {};
@@ -33,11 +43,14 @@ int main(void) {
             adjs.push_back(line);
         }
 
+        dfs(0, adjs, visited);
+
+        // Inicialize a matriz de dominadores
         dominators.clear();
         for (int i = 0; i < n; i++) {
-            std::vector<char> line;
+            std::vector<char> line = {};
             for (int j = 0; j < n; j++) {
-                if (i == j) {
+                if (i == j && visited[i]) {
                     line.push_back('Y');
                 } else {
                     line.push_back('N');
@@ -45,40 +58,41 @@ int main(void) {
             }
             dominators.push_back(line);
         }
-
-        dfs(0, adjs);
-
-        for (int i = 1; i < n; i++) {
-            std::vector<std::vector<int>> copied_adjs = adjs;
-            for (int h = 0; h < n; h++) visited[h] = false;
-            for (int k = 0; k < n; k++) copied_adjs[i][k] = 0;
-            dfs(0, copied_adjs);
-            for (int j = 1; j < n; j++) {
-                if (!visited[j]) {
-                    dominators[i][j] = 'Y';
+        
+        std::vector<bool> visited_2(n);
+        if(sum_vector(adjs[0]) != 0){
+            for (int i = 0; i < n; i++) {
+                std::vector<std::vector<int>> copied_adjs = adjs;
+                for (int h = 0; h < n; h++) visited_2[h] = false;
+                for (int k = 0; k < n; k++) copied_adjs[i][k] = 0;
+                dfs(0, copied_adjs, visited_2);
+                for (int j = 0; j < n; j++) {
+                    if (visited[j] && !visited_2[j]) {
+                        dominators[i][j] = 'Y';
+                    }
                 }
             }
         }
 
         // Imprimir a matriz de dominadores no formato desejado
         std::cout << "Case " << ++test_case << ":" << std::endl;
-        for (int i = 0; i < 2 * n + 1; i++) {
-            for (int j = 0; j < 2 * n + 1; j++) {
-                if (i % 2 == 0) {
-                    if (j % 2 == 0) {
-                        std::cout << '+';
-                    } else {
-                        std::cout << '-';
-                    }
-                } else {
-                    if (j % 2 == 0) {
-                        std::cout << '|';
-                    } else {
-                        std::cout << dominators[i / 2][j / 2];
-                    }
-                }
+        for (int i = 0; i < n; i++) {
+            std::string line = "+";
+            for (int j = 0; j < 2 * n - 1; j++) {
+                line += '-';
             }
-            std::cout << std::endl;
+            line += "+";
+            std::cout << line << std::endl;
+            for (int j = 0; j < n; j++) {
+                std::cout << "|" << dominators[i][j];
+            }
+            std::cout << "|" << std::endl;
         }
+        std::string line = "+";
+        for (int j = 0; j < 2 * n - 1; j++) {
+            line += '-';
+        }
+        line += "+";
+        std::cout << line << std::endl;
     }
 }
