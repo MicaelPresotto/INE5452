@@ -34,8 +34,7 @@ enum class State { NOT_VISITED, TEMPORARY_VISITED, PERMANENTLY_VISITED };
 bool hasCycleDFS(std::vector<std::vector<int>>& graph, std::vector<State>& visited, int u) {
     visited[u] = State::TEMPORARY_VISITED;
 
-    for (int v = 0; v < graph.size(); v++) {
-        if (graph[u][v] == 0) continue;
+    for (int v : graph[u]) {
         if (visited[v] == State::TEMPORARY_VISITED) {
             // Encontrou um vértice já visitado temporariamente, indicando um ciclo.
             return true;
@@ -68,8 +67,8 @@ bool hasCycle(std::vector<std::vector<int>>& graph) {
 
 void DFS_Visit_OT(std::vector<std::vector<int>>& adjs, int u, std::vector<bool>& visited, std::vector<int>& ordem){
     visited[u] = true;
-    for(int v = 0; v < adjs.size(); v++){
-        if(adjs[u][v] && !visited[v]){
+    for(auto &v : adjs[u]){
+        if(!visited[v]){
             DFS_Visit_OT(adjs, v, visited, ordem);
         }
     }
@@ -90,11 +89,11 @@ int main(void){
     for(;;){
         int n, m; std::cin >> n >> m;
         if(n == 0 && m == 0) break;
-        std::vector<std::vector<int>> adjs(n, std::vector<int>(n, false));
+        std::vector<std::vector<int>> adjs(n, std::vector<int>());
         std::vector<bool> visited(n, false);
         for(int i = 0; i < m; i++){
             int a, b; std::cin >> a >> b;
-            adjs[a-1][b-1] = 1;
+            adjs[a-1].push_back(b-1);
         }
         if(hasCycle(adjs)){
             std::cout << "IMPOSSIBLE" << std::endl;
