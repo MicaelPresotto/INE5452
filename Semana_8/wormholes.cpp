@@ -19,7 +19,7 @@ int main(void){
 
         // bellman-ford
         std::vector<int> dist(v, 100000000);
-        std::vector<int> ant(v, -1);
+        
         dist[0] = 0;
         for(int i = 0; i < v-1; i++){
             for(auto it = distances.begin(); it != distances.end(); it++){
@@ -28,7 +28,6 @@ int main(void){
                 int w = it->second;
                 if(dist[u] + w < dist[v]){
                     dist[v] = dist[u] + w;
-                    ant[v] = u;
                 }
             }
         }
