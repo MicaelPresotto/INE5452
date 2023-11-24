@@ -12,7 +12,7 @@ bool is_there_false_in_visited(std::vector<bool>& visited) {
 }
 
 int minimum_distance(std::vector<int> dist, std::vector<bool> visited) {
-    int min = 10000000;
+    int min = 1e9;
     int min_index = -1;
     for (int i = 0; i < dist.size(); i++) {
         if (!visited[i] && dist[i] <= min) {
@@ -24,14 +24,14 @@ int minimum_distance(std::vector<int> dist, std::vector<bool> visited) {
 }
 
 int dijkstra(std::vector<std::vector<int>>& adj_list, std::map<std::pair<int, int>, int>& edges, int start, int finish) {
-    std::vector<int> dist(adj_list.size(), 10000000);
+    std::vector<int> dist(adj_list.size(), 1e9);
     dist[start] = 0;
     std::vector<bool> visited(adj_list.size(), false);
     while (is_there_false_in_visited(visited)) {
         int u = minimum_distance(dist, visited);
         visited[u] = true;
         for (const auto& v : adj_list[u]) {
-            if (!visited[v] && dist[u] != 10000000 && dist[u] + edges[std::make_pair(u, v)] < dist[v]) {
+            if (!visited[v] && dist[u] != 1e9 && dist[u] + edges[std::make_pair(u, v)] < dist[v]) {
                 dist[v] = dist[u] + edges[std::make_pair(u, v)];
             }
         }
@@ -87,10 +87,10 @@ int main(void) {
         for (auto& word : languages[finish]) {
             int col = graph[word];
             adj_list[col].push_back(n + 1);
-            edges[std::make_pair(col, n + 1)] = word.size();
+            edges[std::make_pair(col, n + 1)] = 0;
         }
         int result = dijkstra(adj_list, edges, 0, n + 1);
-        if (result != 10000000)
+        if (result != 1e9)
             std::cout << result << std::endl;
         else
             std::cout << "impossivel" << std::endl;
